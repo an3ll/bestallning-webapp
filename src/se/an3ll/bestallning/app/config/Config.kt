@@ -6,8 +6,12 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.application.Application
 import io.ktor.application.install
+import io.ktor.auth.*
 import io.ktor.features.ContentNegotiation
 import io.ktor.jackson.jackson
+import io.ktor.sessions.SessionStorageMemory
+import io.ktor.sessions.Sessions
+import io.ktor.sessions.cookie
 import org.flywaydb.core.Flyway
 import org.flywaydb.core.api.configuration.FluentConfiguration
 import org.jetbrains.exposed.sql.Database
@@ -15,7 +19,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import se.an3ll.bestallning.app.persistence.BestallningEntity
+import se.an3ll.bestallning.app.routes.MySession
 import se.an3ll.bestallning.app.routes.bestallningRoutes
+import se.an3ll.bestallning.app.routes.loginRoutes
 import se.an3ll.bestallning.app.routes.userRoutes
 import se.an3ll.bestallning.app.services.BestallningService
 import se.an3ll.bestallning.app.services.BestallningServiceImpl
@@ -25,6 +31,7 @@ fun Application.config() {
     initDb()
     bestallningRoutes()
     userRoutes()
+    loginRoutes()
 }
 
 fun Application.features() {
@@ -38,8 +45,39 @@ fun Application.features() {
     install(Koin) {
         modules(applicationModule)
     }
-}
 
+    install(Sessions) {
+        cookie<MySession>("APP_SESSION", SessionStorageMemory())
+    }
+
+//    install(Authentication) {
+//        basic {
+//            realm = "application"
+//            validate { credentials ->
+//                if (credentials.password == "password"
+//                    && credentials.name == "admin") UserIdPrincipal(credentials.name)
+//                else null
+//            }
+//        }
+//
+//    }
+
+   install(Authentication) {
+       form("equal-auth") {
+           userParamName = "username"
+           passwordParamName = "password"
+           challenge = FormAuthChallenge.Redirect { credentials -> "/login?message=Invalid%20credentials" }
+           validate { credentials ->
+               if (credentials.name == credentials.password) {
+                   UserIdPrincipal(credentials.name)
+               } else {
+                   null
+               }
+           }
+
+       }
+   }
+}
 
 val applicationModule = module {
     single<BestallningService> { BestallningServiceImpl() }
