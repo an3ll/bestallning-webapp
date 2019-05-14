@@ -1,12 +1,15 @@
 package se.an3ll.bestallning.app.config
 
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.typesafe.config.ConfigFactory
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.application.Application
 import io.ktor.application.install
-import io.ktor.auth.*
+import io.ktor.auth.Authentication
+import io.ktor.auth.UserIdPrincipal
+import io.ktor.auth.basic
 import io.ktor.features.ContentNegotiation
 import io.ktor.jackson.jackson
 import io.ktor.sessions.SessionStorageMemory
@@ -18,131 +21,109 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
-import se.an3ll.bestallning.app.persistence.BestallningEntity
+import org.slf4j.LoggerFactory
 import se.an3ll.bestallning.app.routes.MySession
 import se.an3ll.bestallning.app.routes.bestallningRoutes
-import se.an3ll.bestallning.app.routes.loginRoutes
 import se.an3ll.bestallning.app.routes.userRoutes
 import se.an3ll.bestallning.app.services.BestallningService
 import se.an3ll.bestallning.app.services.BestallningServiceImpl
 
 fun Application.config() {
-    features()
-    initDb()
-    bestallningRoutes()
-    userRoutes()
-    loginRoutes()
+  features()
+  initDb()
+  bestallningRoutes()
+  userRoutes()
 }
 
 fun Application.features() {
 
-    install(ContentNegotiation) {
-        jackson {
-            enable(SerializationFeature.INDENT_OUTPUT)
-        }
+  install(ContentNegotiation) {
+    jackson {
+      enable(SerializationFeature.INDENT_OUTPUT)
+      registerModule(JavaTimeModule())
+    }
+  }
+
+  install(Koin) {
+    modules(applicationModule)
+  }
+
+  install(Sessions) {
+    cookie<MySession>("APP_SESSION", SessionStorageMemory())
+  }
+
+  install(Authentication) {
+    basic {
+      realm = "application"
+      validate { credentials ->
+        if (credentials.password == "password"
+          && credentials.name == "admin"
+        ) UserIdPrincipal(credentials.name)
+        else null
+      }
     }
 
-    install(Koin) {
-        modules(applicationModule)
-    }
-
-    install(Sessions) {
-        cookie<MySession>("APP_SESSION", SessionStorageMemory())
-    }
-
-//    install(Authentication) {
-//        basic {
-//            realm = "application"
-//            validate { credentials ->
-//                if (credentials.password == "password"
-//                    && credentials.name == "admin") UserIdPrincipal(credentials.name)
-//                else null
-//            }
-//        }
-//
-//    }
-
-   install(Authentication) {
-       form("equal-auth") {
-           userParamName = "username"
-           passwordParamName = "password"
-           challenge = FormAuthChallenge.Redirect { credentials -> "/login?message=Invalid%20credentials" }
-           validate { credentials ->
-               if (credentials.name == credentials.password) {
-                   UserIdPrincipal(credentials.name)
-               } else {
-                   null
-               }
-           }
-
-       }
-   }
+  }
 }
 
 val applicationModule = module {
-    single<BestallningService> { BestallningServiceImpl() }
+  single<BestallningService> { BestallningServiceImpl() }
 }
 
 fun dataSource(): HikariDataSource {
-    val config = HikariConfig()
-    config.schema = "public"
-    config.driverClassName = "org.postgresql.Driver"
-    config.jdbcUrl = "jdbc:postgresql:joakimanell"
-    config.maximumPoolSize = 3
-    config.isAutoCommit = false
-    config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
-    config.username = "joakimanell"
-    config.password = "password"
-    config.validate()
-    return HikariDataSource(config)
+  val config = HikariConfig()
+  config.schema = "public"
+  config.driverClassName = "org.postgresql.Driver"
+  config.jdbcUrl = "jdbc:postgresql:joakimanell"
+  config.maximumPoolSize = 3
+  config.isAutoCommit = false
+  config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
+  config.username = "joakimanell"
+  config.password = "password"
+  config.validate()
+  return HikariDataSource(config)
 }
 
 fun initDb() {
 
-    val dataSource = dataSource()
+  val log = LoggerFactory.getLogger(Application::class.java)
 
-    val profile = ConfigFactory.load().getString("profile")
+  val dataSource = dataSource()
 
-    if (profile == "dev") {
-        DBMigration.clean(dataSource)
-    }
+  val profile = ConfigFactory.load().getString("profile")
 
-    DBMigration.migrate(dataSource)
-    Database.connect(dataSource)
+  if (profile == "dev") {
+    DBMigration.clean(dataSource)
+  }
 
-    //bootstrap data
+  DBMigration.migrate(dataSource)
+  Database.connect(dataSource)
+
+  if (profile == "dev") {
     transaction {
-        BestallningEntity.new {
-            name = "testNamn1"
-            type = "AF32001"
-            personnummer = "19121212-1212"
-        }
-
-        BestallningEntity.new {
-            name = "testNamn2"
-            type = "AF32001"
-            personnummer = "20121212-1212"
-        }
+      val bestallningar = bootstrapBestallningar()
+      log.info("bootstrapped: $bestallningar")
     }
+  }
 }
 
 object DBMigration {
 
-    private fun getFlywayConfig(dataSource: HikariDataSource): FluentConfiguration {
-        val flywayConfig = FluentConfiguration()
-        flywayConfig.dataSource(dataSource)
-        flywayConfig.schemas(dataSource.schema)
-        flywayConfig.locations("db/migration/")
-        return flywayConfig
-    }
+  private fun getFlywayConfig(dataSource: HikariDataSource): FluentConfiguration {
+    val flywayConfig = FluentConfiguration()
+    flywayConfig.dataSource(dataSource)
+    flywayConfig.schemas(dataSource.schema)
+    flywayConfig.locations("db/migration/")
+    return flywayConfig
+  }
 
-    fun migrate(dataSource: HikariDataSource) {
-        val flyway = Flyway(getFlywayConfig(dataSource))
-        flyway.migrate()
-    }
+  fun migrate(dataSource: HikariDataSource) {
+    val flyway = Flyway(getFlywayConfig(dataSource))
+    flyway.migrate()
+  }
 
-    fun clean(dataSource: HikariDataSource) {
-        val flyway = Flyway(getFlywayConfig(dataSource))
-        flyway.clean();
-    }
+  fun clean(dataSource: HikariDataSource) {
+    val flyway = Flyway(getFlywayConfig(dataSource))
+    flyway.clean()
+  }
 }
