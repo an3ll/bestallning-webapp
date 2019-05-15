@@ -1,5 +1,6 @@
 package se.an3ll.bestallning.app.services
 
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.transactions.transaction
 import se.an3ll.bestallning.app.converters.toDomain
 import se.an3ll.bestallning.app.domain.Bestallning
@@ -21,11 +22,12 @@ class BestallningServiceImpl : BestallningService {
   }
 
   override fun listByQuery(query: ListBestallningarQuery): List<Bestallning> {
-
     return transaction {
       query.textSearch?.let {
+
         BestallningEntity.find {
-          BestallningarTable.statusString like "%$it%"
+          (BestallningarTable.statusString like "%$it%") or
+              (BestallningarTable.invanarePersonId like "%$it%")
         }
           .limit(query.limit)
           .sortedBy { it.id }
@@ -33,6 +35,5 @@ class BestallningServiceImpl : BestallningService {
         ?.map { entity -> entity.toDomain() }
         .orEmpty()
     }
-
   }
 }
