@@ -10,6 +10,7 @@ object BestallningarTable : IntIdTable("bestallning") {
   val intygTyp = varchar("intyg_typ", 255)
   val intygTypBeskrivning = varchar("intyg_typ_beskrivning", 255)
   val ankomstDatum = datetime("ankomst_datum")
+  val ankomstDatumString = varchar("ankomst_datum_string", 255)
   val avslutDatum = datetime("avslut_datum").nullable()
   val syfte = varchar("syfte", 255).nullable()
   val arendeReferens = varchar("arende_referens", 255).nullable()
@@ -34,6 +35,7 @@ class BestallningEntity(id: EntityID<Int>) : IntEntity(id) {
   var intygTyp by BestallningarTable.intygTyp
   var intygTypBeskrivning by BestallningarTable.intygTypBeskrivning
   var ankomstDatum by BestallningarTable.ankomstDatum
+  var ankomstDatumString by BestallningarTable.ankomstDatumString
   var avslutDatum by BestallningarTable.avslutDatum
   var syfte by BestallningarTable.syfte
   var arendeReferens by BestallningarTable.arendeReferens

@@ -18,6 +18,7 @@ create table bestallning(
   intyg_typ varchar (255) not null,
   intyg_typ_beskrivning varchar (255) not null,
   ankomst_datum timestamp not null,
+  ankomst_datum_string varchar (255) not null,
   avslut_datum timestamp (255),
   syfte varchar (255),
   arende_referens varchar (255),

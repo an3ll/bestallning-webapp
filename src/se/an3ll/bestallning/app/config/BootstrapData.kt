@@ -3,8 +3,11 @@ package se.an3ll.bestallning.app.config
 import org.joda.time.DateTime
 import se.an3ll.bestallning.app.persistence.BestallningEntity
 import se.an3ll.bestallning.app.persistence.HandlaggareEntity
+import java.time.format.DateTimeFormatter
 
 fun bootstrapBestallningar(): List<BestallningEntity> {
+
+  val formatter = DateTimeFormatter.ISO_DATE_TIME
 
   val handlaggare1: HandlaggareEntity = HandlaggareEntity.new {
     fullstandigtNamn = "HandlaggareNamn"
@@ -28,11 +31,15 @@ fun bootstrapBestallningar(): List<BestallningEntity> {
     kostnadsstalle = "Stället2"
   }
 
+  var now = DateTime.now()
+  var nowString = now.toString()
+
   val bestallning1 = BestallningEntity.new {
     typ = "F1.0_AF00213"
     intygTyp = "AF00213"
     intygTypBeskrivning = "Arbetsförmedlingens medicinska utlåtande"
-    ankomstDatum = DateTime()
+    ankomstDatum = now
+    ankomstDatumString = nowString
     avslutDatum = null
     syfte = "viktigt syfte"
     arendeReferens = "referens1"
@@ -49,11 +56,15 @@ fun bootstrapBestallningar(): List<BestallningEntity> {
     vardenhetEpost = "e@post"
   }
 
+  now = DateTime.now()
+  nowString = now.toString()
+
   val bestallning2 = BestallningEntity.new {
     typ = "F1.0_AF00213"
     intygTyp = "AF00213"
     intygTypBeskrivning = "Arbetsförmedlingens medicinska utlåtande"
-    ankomstDatum = DateTime()
+    ankomstDatum = now
+    ankomstDatumString = nowString
     avslutDatum = null
     syfte = "viktigt syfte"
     arendeReferens = "referens1"
