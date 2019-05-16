@@ -2,10 +2,10 @@ package se.an3ll.bestallning.app.config
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.typesafe.config.ConfigFactory
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.application.Application
+import io.ktor.application.ApplicationEnvironment
 import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.UserIdPrincipal
@@ -30,7 +30,9 @@ import se.an3ll.bestallning.app.services.BestallningServiceImpl
 
 fun Application.config() {
   features()
-  initDb()
+
+  initDb(environment)
+
   bestallningRoutes()
   userRoutes()
 }
@@ -84,46 +86,38 @@ fun dataSource(): HikariDataSource {
   return HikariDataSource(config)
 }
 
-fun initDb() {
+fun devDataSource(): HikariDataSource {
+  val config = HikariConfig()
+  config.driverClassName = "org.h2.Driver"
+  config.jdbcUrl = "jdbc:h2:mem:test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;"
+  config.username = "sa"
+  config.maximumPoolSize = 3
+  config.isAutoCommit = false
+  config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
+  config.validate()
+  return HikariDataSource(config)
+}
+
+fun initDb(environment: ApplicationEnvironment) {
 
   val log = LoggerFactory.getLogger(Application::class.java)
 
-  val dataSource = dataSource()
+  when (environment.config.property("ktor.environment").getString()) {
+    "dev" -> {
+      val dataSource = devDataSource()
+      DBMigration.clean(dataSource)
+      DBMigration.migrate(dataSource)
+      Database.connect(dataSource)
 
-  val profile = ConfigFactory.load().getString("profile")
-
-  if (profile == "dev") {
-    DBMigration.clean(dataSource)
-  }
-
-  DBMigration.migrate(dataSource)
-  Database.connect(dataSource)
-
-  if (profile == "dev") {
-    transaction {
-      val bestallningar = bootstrapBestallningar()
-      log.info("bootstrapped: $bestallningar")
+      transaction {
+        val bestallningar = bootstrapBestallningar()
+        log.info("bootstrapped: $bestallningar")
+      }
     }
-  }
-}
-
-object DBMigration {
-
-  private fun getFlywayConfig(dataSource: HikariDataSource): FluentConfiguration {
-    val flywayConfig = FluentConfiguration()
-    flywayConfig.dataSource(dataSource)
-    flywayConfig.schemas(dataSource.schema)
-    flywayConfig.locations("db/migration/")
-    return flywayConfig
-  }
-
-  fun migrate(dataSource: HikariDataSource) {
-    val flyway = Flyway(getFlywayConfig(dataSource))
-    flyway.migrate()
-  }
-
-  fun clean(dataSource: HikariDataSource) {
-    val flyway = Flyway(getFlywayConfig(dataSource))
-    flyway.clean()
+    else -> {
+      val dataSource = dataSource()
+      DBMigration.migrate(dataSource)
+      Database.connect(dataSource)
+    }
   }
 }
