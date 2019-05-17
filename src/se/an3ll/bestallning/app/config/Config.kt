@@ -2,8 +2,6 @@ package se.an3ll.bestallning.app.config
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
 import io.ktor.application.Application
 import io.ktor.application.ApplicationEnvironment
 import io.ktor.application.install
@@ -15,13 +13,14 @@ import io.ktor.jackson.jackson
 import io.ktor.sessions.SessionStorageMemory
 import io.ktor.sessions.Sessions
 import io.ktor.sessions.cookie
-import org.flywaydb.core.Flyway
-import org.flywaydb.core.api.configuration.FluentConfiguration
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.slf4j.LoggerFactory
+import se.an3ll.bestallning.app.config.BootstrapData.bootstrapBestallningar
+import se.an3ll.bestallning.app.config.DataSource.dataSource
+import se.an3ll.bestallning.app.config.DataSource.devDataSource
 import se.an3ll.bestallning.app.routes.MySession
 import se.an3ll.bestallning.app.routes.bestallningRoutes
 import se.an3ll.bestallning.app.routes.userRoutes
@@ -64,7 +63,6 @@ fun Application.features() {
         else null
       }
     }
-
   }
 }
 
@@ -72,31 +70,7 @@ val applicationModule = module {
   single<BestallningService> { BestallningServiceImpl() }
 }
 
-fun dataSource(): HikariDataSource {
-  val config = HikariConfig()
-  config.schema = "public"
-  config.driverClassName = "org.postgresql.Driver"
-  config.jdbcUrl = "jdbc:postgresql:joakimanell"
-  config.maximumPoolSize = 3
-  config.isAutoCommit = false
-  config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
-  config.username = "joakimanell"
-  config.password = "password"
-  config.validate()
-  return HikariDataSource(config)
-}
 
-fun devDataSource(): HikariDataSource {
-  val config = HikariConfig()
-  config.driverClassName = "org.h2.Driver"
-  config.jdbcUrl = "jdbc:h2:mem:test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;"
-  config.username = "sa"
-  config.maximumPoolSize = 3
-  config.isAutoCommit = false
-  config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
-  config.validate()
-  return HikariDataSource(config)
-}
 
 fun initDb(environment: ApplicationEnvironment) {
 

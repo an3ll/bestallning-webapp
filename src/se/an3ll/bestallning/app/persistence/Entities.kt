@@ -5,26 +5,28 @@ import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.IntIdTable
 
+private const val VARCHAR_255 = 255
+
 object BestallningarTable : IntIdTable("bestallning") {
-  val typ = varchar("typ", 255)
-  val intygTyp = varchar("intyg_typ", 255)
-  val intygTypBeskrivning = varchar("intyg_typ_beskrivning", 255)
+  val typ = varchar("typ", VARCHAR_255)
+  val intygTyp = varchar("intyg_typ", VARCHAR_255)
+  val intygTypBeskrivning = varchar("intyg_typ_beskrivning", VARCHAR_255)
   val ankomstDatum = datetime("ankomst_datum")
-  val ankomstDatumString = varchar("ankomst_datum_string", 255)
+  val ankomstDatumString = varchar("ankomst_datum_string", VARCHAR_255)
   val avslutDatum = datetime("avslut_datum").nullable()
-  val syfte = varchar("syfte", 255).nullable()
-  val arendeReferens = varchar("arende_referens", 255).nullable()
-  val planeradeAktiviteter = varchar("planerade_aktiviteter", 255).nullable()
-  val status = varchar("status", 255)
-  val statusString = varchar("status_string", 255)
-  val invanarePersonId = varchar("invanare_person_id", 255)
-  val invanareBakgrundNulage = varchar("invanare_bakgrund_nulage", 255).nullable()
+  val syfte = varchar("syfte", VARCHAR_255).nullable()
+  val arendeReferens = varchar("arende_referens", VARCHAR_255).nullable()
+  val planeradeAktiviteter = varchar("planerade_aktiviteter", VARCHAR_255).nullable()
+  val status = varchar("status", VARCHAR_255)
+  val statusString = varchar("status_string", VARCHAR_255)
+  val invanarePersonId = varchar("invanare_person_id", VARCHAR_255)
+  val invanareBakgrundNulage = varchar("invanare_bakgrund_nulage", VARCHAR_255).nullable()
   val handlaggare = reference("handlaggare_id", HandlaggareTable)
-  val vardenhetHsaId = varchar("vardenhet_hsa_id", 255)
-  val vardenhetVardgivareHsaId = varchar("vardenhet_vardgivare_hsa_id", 255)
-  val vardenhetVardgivareOrganisationId = varchar("vardenhet_vardgivare_organisation_id", 255)
-  val vardenhetNamn = varchar("vardenhet_namn", 255)
-  val vardenhetEpost = varchar("vardenhet_epost", 255)
+  val vardenhetHsaId = varchar("vardenhet_hsa_id", VARCHAR_255)
+  val vardenhetVardgivareHsaId = varchar("vardenhet_vardgivare_hsa_id", VARCHAR_255)
+  val vardenhetVardgivareOrganisationId = varchar("vardenhet_vardgivare_organisation_id", VARCHAR_255)
+  val vardenhetNamn = varchar("vardenhet_namn", VARCHAR_255)
+  val vardenhetEpost = varchar("vardenhet_epost", VARCHAR_255)
 
 }
 
@@ -53,14 +55,14 @@ class BestallningEntity(id: EntityID<Int>) : IntEntity(id) {
 }
 
 object HandlaggareTable : IntIdTable("handlaggare") {
-  val fullstandigtNamn = varchar("fullstandigt_namn", 255).nullable()
-  val telefonnummer = varchar("telefonnummer", 255).nullable()
-  val myndighet = varchar("myndighet", 255)
-  val kontor = varchar("kontor", 255).nullable()
-  val adress = varchar("adress", 255).nullable()
-  val postnummer = varchar("postnummer", 255).nullable()
-  val stad = varchar("stad", 255).nullable()
-  val kostnadsstalle = varchar("kostnadsstalle", 255).nullable()
+  val fullstandigtNamn = varchar("fullstandigt_namn", VARCHAR_255).nullable()
+  val telefonnummer = varchar("telefonnummer", VARCHAR_255).nullable()
+  val myndighet = varchar("myndighet", VARCHAR_255)
+  val kontor = varchar("kontor", VARCHAR_255).nullable()
+  val adress = varchar("adress", VARCHAR_255).nullable()
+  val postnummer = varchar("postnummer", VARCHAR_255).nullable()
+  val stad = varchar("stad", VARCHAR_255).nullable()
+  val kostnadsstalle = varchar("kostnadsstalle", VARCHAR_255).nullable()
 }
 
 class HandlaggareEntity(id: EntityID<Int>) : IntEntity(id) {
