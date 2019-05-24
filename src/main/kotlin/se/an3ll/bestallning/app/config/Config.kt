@@ -24,6 +24,8 @@ import se.an3ll.bestallning.app.config.DataSource.devDataSource
 import se.an3ll.bestallning.app.routes.MySession
 import se.an3ll.bestallning.app.routes.bestallningRoutes
 import se.an3ll.bestallning.app.routes.userRoutes
+import se.an3ll.bestallning.app.services.BestallningPersistenceService
+import se.an3ll.bestallning.app.services.BestallningPersistenceServiceImpl
 import se.an3ll.bestallning.app.services.BestallningService
 import se.an3ll.bestallning.app.services.BestallningServiceImpl
 
@@ -67,10 +69,9 @@ fun Application.features() {
 }
 
 val applicationModule = module {
-  single<BestallningService> { BestallningServiceImpl() }
+  single<BestallningService> { BestallningServiceImpl(get()) }
+  single<BestallningPersistenceService> { BestallningPersistenceServiceImpl() }
 }
-
-
 
 fun initDb(environment: ApplicationEnvironment) {
 

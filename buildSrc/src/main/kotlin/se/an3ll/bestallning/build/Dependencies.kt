@@ -11,5 +11,7 @@ object Dependencies {
   const val hikariVersion = "3.3.1"
   const val flywayVersion = "5.2.4"
   const val jacksonVersion = "2.9.8"
+  const val spekVersion = "2.0.4"
+  const val mockkVersion = "1.9.3"
 
 }

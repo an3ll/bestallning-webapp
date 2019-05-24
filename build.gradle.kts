@@ -1,5 +1,15 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import se.an3ll.bestallning.build.Dependencies
+import se.an3ll.bestallning.build.Dependencies.exposedVersion
+import se.an3ll.bestallning.build.Dependencies.flywayVersion
+import se.an3ll.bestallning.build.Dependencies.hikariVersion
+import se.an3ll.bestallning.build.Dependencies.jacksonVersion
+import se.an3ll.bestallning.build.Dependencies.koinVersion
+import se.an3ll.bestallning.build.Dependencies.kotlinVersion
+import se.an3ll.bestallning.build.Dependencies.ktorVersion
+import se.an3ll.bestallning.build.Dependencies.logbackVersion
+import se.an3ll.bestallning.build.Dependencies.mockkVersion
+import se.an3ll.bestallning.build.Dependencies.postgresVersion
+import se.an3ll.bestallning.build.Dependencies.spekVersion
 
 plugins {
   application
@@ -30,43 +40,45 @@ repositories {
 dependencies {
 
   //kotlin
-  implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Dependencies.kotlinVersion}")
+  implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
 
   //ktor
-  implementation("io.ktor:ktor-server-core:${Dependencies.ktorVersion}")
+  implementation("io.ktor:ktor-server-core:$ktorVersion")
 
   //ktor features
-  implementation("io.ktor:ktor-server-tomcat:${Dependencies.ktorVersion}")
-  implementation("io.ktor:ktor-auth:${Dependencies.ktorVersion}")
-  implementation("io.ktor:ktor-jackson:${Dependencies.ktorVersion}")
-  implementation("org.koin:koin-ktor:${Dependencies.koinVersion}")
-  implementation("io.ktor:ktor-html-builder:${Dependencies.ktorVersion}")
+  implementation("io.ktor:ktor-server-tomcat:$ktorVersion")
+  implementation("io.ktor:ktor-auth:$ktorVersion")
+  implementation("io.ktor:ktor-jackson:$ktorVersion")
+  implementation("org.koin:koin-ktor:$koinVersion")
+  implementation("io.ktor:ktor-html-builder:$ktorVersion")
 
   //serialization
-  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${Dependencies.jacksonVersion}")
-
+  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
   //logging
-  implementation("ch.qos.logback:logback-classic:${Dependencies.logbackVersion}")
+  implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
   //db
-  implementation("org.postgresql:postgresql:${Dependencies.postgresVersion}")
-  implementation("org.jetbrains.exposed:exposed:${Dependencies.exposedVersion}")
-  implementation("com.zaxxer:HikariCP:${Dependencies.hikariVersion}")
-  implementation("org.flywaydb:flyway-core:${Dependencies.flywayVersion}")
+  implementation("org.postgresql:postgresql:$postgresVersion")
+  implementation("org.jetbrains.exposed:exposed:$exposedVersion")
+  implementation("com.zaxxer:HikariCP:$hikariVersion")
+  implementation("org.flywaydb:flyway-core:$flywayVersion")
 
+  //test dependencies
+  testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
 
-  //test
-  testImplementation("io.ktor:ktor-server-tests:${Dependencies.ktorVersion}")
+  //mockK
+  testImplementation("io.mockk:mockk:$mockkVersion")
+
+  //spek
+  testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
+  testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spekVersion")
+  testRuntimeOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+  testCompile(kotlin("script-runtime"))
 }
 
-kotlin.sourceSets["main"].kotlin.srcDirs("src")
-kotlin.sourceSets["test"].kotlin.srcDirs("test")
-
-sourceSets["main"].resources.srcDirs("resources")
-sourceSets["test"].resources.srcDirs("testresources")
-
 tasks {
+
   withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
   }
@@ -78,6 +90,12 @@ tasks {
           "Main-Class" to application.mainClassName
         )
       )
+    }
+  }
+
+  withType<Test> {
+    useJUnitPlatform {
+      includeEngines("spek2")
     }
   }
 }

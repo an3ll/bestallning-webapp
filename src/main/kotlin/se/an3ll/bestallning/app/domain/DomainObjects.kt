@@ -34,12 +34,12 @@ enum class BestallningStatus(val beskrivning: String) {
 }
 
 data class Handlaggare(
-  val fullstandigtNamn: String?,
-  val telefonnummer: String?,
+  var fullstandigtNamn: String? = null,
+  var telefonnummer: String? = null,
   val myndighet: String,
-  val kontor: String?,
-  val adress: String?,
-  val postnummer: String?,
-  val stad: String?,
-  val kostnadsstalle: String?
+  var kontor: String? = null,
+  var adress: String? = null,
+  var postnummer: String? = null,
+  var stad: String? = null,
+  var kostnadsstalle: String? = null
 )
