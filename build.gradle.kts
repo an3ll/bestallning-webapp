@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import se.an3ll.bestallning.build.Dependencies.exposedVersion
 import se.an3ll.bestallning.build.Dependencies.flywayVersion
 import se.an3ll.bestallning.build.Dependencies.hikariVersion
-import se.an3ll.bestallning.build.Dependencies.jacksonVersion
 import se.an3ll.bestallning.build.Dependencies.koinVersion
 import se.an3ll.bestallning.build.Dependencies.kotlinVersion
 import se.an3ll.bestallning.build.Dependencies.ktorVersion
@@ -48,13 +47,10 @@ dependencies {
   //ktor features
   implementation("io.ktor:ktor-server-tomcat:$ktorVersion")
   implementation("io.ktor:ktor-auth:$ktorVersion")
-  implementation("io.ktor:ktor-jackson:$ktorVersion")
+  implementation("io.ktor:ktor-gson:$ktorVersion")
   implementation("org.koin:koin-ktor:$koinVersion")
   implementation("io.ktor:ktor-html-builder:$ktorVersion")
-
-  //serialization
-  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-
+  
   //logging
   implementation("ch.qos.logback:logback-classic:$logbackVersion")
 

@@ -1,13 +1,13 @@
 package se.an3ll.bestallning.app.domain
 
-import org.joda.time.DateTime
+import java.time.LocalDateTime
 
 data class Bestallning(
   val typ: String,
   val intygTyp: String,
   val intygTypBeskrivning: String,
-  val ankomstDatum: DateTime,
-  val avslutDatum: DateTime?,
+  val ankomstDatum: String,
+  val avslutDatum: String?,
   val syfte: String?,
   val arendeReferens: String?,
   val planeradeAktiviteter: String?,

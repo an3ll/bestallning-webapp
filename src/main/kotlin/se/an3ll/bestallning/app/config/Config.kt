@@ -1,7 +1,5 @@
 package se.an3ll.bestallning.app.config
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.application.Application
 import io.ktor.application.ApplicationEnvironment
 import io.ktor.application.install
@@ -9,7 +7,7 @@ import io.ktor.auth.Authentication
 import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.basic
 import io.ktor.features.ContentNegotiation
-import io.ktor.jackson.jackson
+import io.ktor.gson.gson
 import io.ktor.sessions.SessionStorageMemory
 import io.ktor.sessions.Sessions
 import io.ktor.sessions.cookie
@@ -28,6 +26,7 @@ import se.an3ll.bestallning.app.services.BestallningPersistenceService
 import se.an3ll.bestallning.app.services.BestallningPersistenceServiceImpl
 import se.an3ll.bestallning.app.services.BestallningService
 import se.an3ll.bestallning.app.services.BestallningServiceImpl
+import java.text.DateFormat
 
 fun Application.config() {
   features()
@@ -41,9 +40,9 @@ fun Application.config() {
 fun Application.features() {
 
   install(ContentNegotiation) {
-    jackson {
-      enable(SerializationFeature.INDENT_OUTPUT)
-      registerModule(JavaTimeModule())
+    gson {
+      setPrettyPrinting()
+      setDateFormat(DateFormat.DATE_FIELD)
     }
   }
 
