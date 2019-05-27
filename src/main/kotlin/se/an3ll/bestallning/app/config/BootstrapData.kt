@@ -4,7 +4,6 @@ import org.joda.time.DateTime
 import se.an3ll.bestallning.app.persistence.BestallningEntity
 import se.an3ll.bestallning.app.persistence.HandlaggareEntity
 
-@Suppress("LongMethod")
 object BootstrapData {
 
   fun bootstrapBestallningar(): List<BestallningEntity> {

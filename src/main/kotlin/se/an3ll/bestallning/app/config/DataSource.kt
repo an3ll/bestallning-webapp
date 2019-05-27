@@ -3,7 +3,6 @@ package se.an3ll.bestallning.app.config
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 
-@Suppress("MagicNumber")
 object DataSource {
 
   fun dataSource(): HikariDataSource {
