@@ -36,7 +36,7 @@ object TestData {
       typ = "F1.0_AF00213",
       intygTyp = "AF00213",
       intygTypBeskrivning = "Arbetsförmedlingens medicinska utlåtande",
-      ankomstDatum = DateTime.now(),
+      ankomstDatum = DateTime.now().toString(),
       avslutDatum = null,
       syfte = "viktigt syfte",
       arendeReferens = "referens1",
