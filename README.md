@@ -33,3 +33,20 @@ http://localhost:8080/
 ## Configuration
 All the configurations for the application can be found in the file:
 [src/main/resources/application.conf](src/main/resources/application.conf)
+
+### Database configuration
+
+If the parameter ktor.environment is set to "dev" like below
+```
+ktor {
+  environment = dev
+}
+```
+
+The application will start with an embedded in memory database.
+
+If the parameter is set to anything else the datasource will connect to a 
+persistent postgres-database. 
+
+To change the configuration for the datasource, see the file:
+[src/main/kotlin/se/an3ll/bestallning/app/config/DataSource.kt](src/main/kotlin/se/an3ll/bestallning/app/config/DataSource.kt)

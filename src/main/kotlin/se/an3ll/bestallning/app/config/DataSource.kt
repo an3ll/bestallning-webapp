@@ -9,11 +9,11 @@ object DataSource {
     val config = HikariConfig()
     config.schema = "public"
     config.driverClassName = "org.postgresql.Driver"
-    config.jdbcUrl = "jdbc:postgresql:joakimanell"
+    config.jdbcUrl = "jdbc:postgresql:bestallning"
     config.maximumPoolSize = 3
     config.isAutoCommit = false
     config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
-    config.username = "joakimanell"
+    config.username = "user"
     config.password = "password"
     config.validate()
     return HikariDataSource(config)
