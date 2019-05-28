@@ -2,13 +2,14 @@
 
 This is a simple webapp using the Ktor framework and Kotlin.
 
-## Tech stack
+## Stack
 * Language: Kotlin (targeting jvm)- https://kotlinlang.org/
 * Database abstraction layer: Exposed Framework - https://github.com/JetBrains/Exposed
 * Database migration tool: https://flywaydb.org/
 * Dependency Injection: Koin - https://insert-koin.io/
 * Build tool: Gradle - https://gradle.org/
-* Code Lint tool: Detekt: https://arturbosch.github.io/detekt/
+* Code Lint tool: Detekt - https://arturbosch.github.io/detekt/
+* Test framework: Spek - https://spekframework.org/
 
 ## Installation
 To run and build the application, you need to have 
