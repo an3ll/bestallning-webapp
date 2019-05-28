@@ -10,6 +10,7 @@ This is a simple webapp using the Ktor framework and Kotlin.
 * Build tool: Gradle - https://gradle.org/
 * Code Lint tool: Detekt - https://arturbosch.github.io/detekt/
 * Test framework: Spek - https://spekframework.org/
+* Test Mock framework: MockK - https://github.com/mockk/mockk
 
 ## Installation
 To run and build the application, you need to have 
