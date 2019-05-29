@@ -1,7 +1,5 @@
 package se.an3ll.bestallning.app.domain
 
-import java.time.LocalDateTime
-
 data class Bestallning(
   val typ: String,
   val intygTyp: String,

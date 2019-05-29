@@ -3,8 +3,6 @@ package se.an3ll.bestallning.app.routes
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.auth.authenticate
-import io.ktor.client.request.request
-import io.ktor.http.Parameters
 import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.route

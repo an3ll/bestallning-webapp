@@ -14,7 +14,7 @@ import se.an3ll.bestallning.app.services.TestData.bestallningList
 import se.an3ll.bestallning.app.services.TestData.bestallningQuery
 import kotlin.test.assertEquals
 
-object MyTest : Spek({
+object ServicesTest : Spek({
 
   group("BestallningServiceImpl Tests") {
 

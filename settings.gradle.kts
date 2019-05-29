@@ -1,7 +1,7 @@
 rootProject.name = "bestallning"
 
 pluginManagement {
-    repositories {
-        gradlePluginPortal()
-    }
+  repositories {
+    gradlePluginPortal()
+  }
 }

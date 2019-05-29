@@ -50,7 +50,7 @@ dependencies {
   implementation("io.ktor:ktor-gson:$ktorVersion")
   implementation("org.koin:koin-ktor:$koinVersion")
   implementation("io.ktor:ktor-html-builder:$ktorVersion")
-  
+
   //logging
   implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
