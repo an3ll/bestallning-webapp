@@ -89,7 +89,7 @@ fun initDb(environment: ApplicationEnvironment) {
       }
     }
     else -> {
-      val dataSource = dataSource()
+      val dataSource = dataSource(environment)
       DBMigration.migrate(dataSource)
       Database.connect(dataSource)
     }
